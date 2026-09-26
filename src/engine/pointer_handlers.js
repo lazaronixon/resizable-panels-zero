@@ -4,6 +4,7 @@ import { getMountedGroups, updateMountedGroup } from "./groups_state"
 import { calculateResizePreviews } from "./resize_previews"
 import { findMatchingHitRegions } from "../dom/hit_regions"
 import { getImperativePanelMethods } from "./imperative_methods"
+import { isHTMLElement } from "../helpers/dom_helper"
 import { layoutsEqual } from "../layout/layout_numbers"
 import { updateCursorStyle } from "../cursor/cursor_style"
 
@@ -135,7 +136,8 @@ export function onDocumentPointerLeave(pointerEvent) {
 // Moving onto an iframe fires no "pointerout" the document can use, which
 // would leave a separator stuck showing hover.
 export function onDocumentPointerOut(pointerEvent) {
-  if (!(pointerEvent.relatedTarget instanceof HTMLIFrameElement)) return
+  const { relatedTarget } = pointerEvent
+  if (!isHTMLElement(relatedTarget) || relatedTarget.localName !== "iframe") return
 
   if (getInteractionState().state === "hover") updateInteractionState({ cursorFlags: 0, state: "inactive" })
 }

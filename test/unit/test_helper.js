@@ -165,8 +165,13 @@ class MockResizeObserver {
     const entries = elements.map(element => {
       const contentRect = element.getBoundingClientRect()
 
+      // Block and inline sizes follow the writing mode, as a real observer's do.
+      const vertical = (window.getComputedStyle(element).writingMode ?? "").includes("vertical")
+      const blockSize = vertical ? contentRect.width : contentRect.height
+      const inlineSize = vertical ? contentRect.height : contentRect.width
+
       return {
-        borderBoxSize: [ { blockSize: contentRect.height, inlineSize: contentRect.width } ],
+        borderBoxSize: [ { blockSize, inlineSize } ],
         contentBoxSize: [],
         contentRect,
         devicePixelContentBoxSize: [],

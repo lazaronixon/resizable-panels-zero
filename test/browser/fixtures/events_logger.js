@@ -6,6 +6,12 @@ function record(type, event) {
   globalThis.recordedEvents.push({ type, id: event.target.id, detail: event.detail })
 }
 
-document.addEventListener("resizable-group:layout-change", event => record("layout-change", event))
-document.addEventListener("resizable-group:layout-changed", event => record("layout-changed", event))
-document.addEventListener("resizable-panel:resize", event => record("resize", event))
+// Events bubble only as far as their own document, so a popup gets listeners of
+// its own that record into this window's list.
+export function logEvents(ownerDocument) {
+  ownerDocument.addEventListener("resizable-group:layout-change", event => record("layout-change", event))
+  ownerDocument.addEventListener("resizable-group:layout-changed", event => record("layout-changed", event))
+  ownerDocument.addEventListener("resizable-panel:resize", event => record("resize", event))
+}
+
+logEvents(document)

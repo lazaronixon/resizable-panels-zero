@@ -112,6 +112,20 @@ describe("sizeStyleToPixels", () => {
       expect(toPixels(1600, "50vw")).toBe(400)
       expect(toPixels(1600, "0vw")).toBe(0)
     })
+
+    // A group in a popup or an iframe is sized against that window, not the
+    // one running the script.
+    test("viewport units use the panel's own window", () => {
+      window.innerHeight = 600
+      window.innerWidth = 1000
+
+      const panelElement = {
+        ownerDocument: { defaultView: { innerHeight: 300, innerWidth: 400 } }
+      }
+
+      expect(sizeStyleToPixels({ groupSize: 1600, panelElement, styleProp: "50vw" })).toBe(200)
+      expect(sizeStyleToPixels({ groupSize: 1600, panelElement, styleProp: "50vh" })).toBe(150)
+    })
   })
 })
 

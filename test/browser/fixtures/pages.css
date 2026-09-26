@@ -1,0 +1,9 @@
+/* Shared by the static pages that stand in for the React library's app
+   integrations (vite, vike, next), which render the same demo. */
+body { margin: 0; font: 12px/1.2 system-ui, sans-serif; }
+main { display: flex; flex-direction: column; gap: 8px; padding: 8px; }
+resizable-group { gap: 8px; }
+resizable-panel { background: #e2e8f0; border-radius: 6px; }
+resizable-panel > div { padding: 8px; }
+resizable-separator { min-height: 8px; background: #94a3b8; border-radius: 6px; }
+.default-size { height: 100px; }

@@ -62,9 +62,9 @@ export default class ResizableGroupElement extends HTMLElement {
   connectedCallback() {
     this.#connected = true
 
-    installStyles(this.getAttribute("nonce"))
+    installStyles(this.ownerDocument, this.getAttribute("nonce"))
 
-    if (!this.id) this.id = uniqueId("resizable-group")
+    if (!this.id) this.id = uniqueId("resizable-group", this.ownerDocument)
     this.setAttribute("data-group", "")
 
     this.#scheduleMount()

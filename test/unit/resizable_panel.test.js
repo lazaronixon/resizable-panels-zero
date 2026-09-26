@@ -195,6 +195,40 @@ describe("resizable-panel", () => {
     })
   })
 
+  // The React library checks that a panel's children do not re-render when the
+  // layout changes; here, that a layout change touches nothing but the panels'
+  // own style.
+  test("a layout change leaves the panel's contents alone", async () => {
+    setElementBoundsFunction(element => {
+      return element.hasAttribute("data-panel") ? new DOMRect(0, 0, 50, 50) : new DOMRect(0, 0, 100, 50)
+    })
+
+    const group = await mount(`
+      <resizable-group>
+        <resizable-panel id="left"></resizable-panel>
+        <resizable-panel id="right"><div class="child">Content</div></resizable-panel>
+      </resizable-group>
+    `)
+    const child = document.querySelector(".child")
+
+    const observer = new MutationObserver(() => {})
+    observer.observe(group, { attributes: true, characterData: true, childList: true, subtree: true })
+
+    group.setLayout({ left: 25, right: 75 })
+    const mutations = observer.takeRecords()
+    observer.disconnect()
+
+    expect(group.getLayout()).toEqual({ left: 25, right: 75 })
+    expect(mutations.length).toBeGreaterThan(0)
+    for (const mutation of mutations) {
+      expect(mutation.type).toBe("attributes")
+      expect(mutation.attributeName).toBe("style")
+      expect(mutation.target.localName).toBe("resizable-panel")
+    }
+    expect(document.querySelector(".child")).toBe(child)
+    expect(child.textContent).toBe("Content")
+  })
+
   describe("HTML attributes", () => {
     test("keeps an explicit id and marks itself with data-panel", async () => {
       await mount(`

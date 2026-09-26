@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>resizable-panels-zero — cookie storage</title>
+    <!-- Stands in for the React library's server-rendered app, which hands
+         useDefaultLayout a storage object backed by a cookie so the server can
+         render the saved layout. -->
+    <script src="/layout_shift.js"></script>
+    <link rel="stylesheet" href="/pages.css">
+    <script type="module">
+      import "/setup.js"
+
+      // The groups upgrade while setup.js runs but mount in a later microtask,
+      // so a storage assigned here is in place before either reads it.
+      const cookieStorage = {
+        getItem(key) {
+          const prefix = `${encodeURIComponent(key)}=`
+          const cookie = document.cookie.split("; ").find(entry => entry.startsWith(prefix))
+          return cookie ? decodeURIComponent(cookie.slice(prefix.length)) : null
+        },
+        setItem(key, value) {
+          document.cookie = `${encodeURIComponent(key)}=${encodeURIComponent(value)}; path=/`
+        }
+      }
+
+      document.querySelectorAll("resizable-group[autosave]").forEach(group => {
+        group.storage = cookieStorage
+      })
+    </script>
+  </head>
+  <body>
+    <main>
+      <resizable-group id="group-one" autosave="group-one" style="height: 100px">
+        <resizable-panel id="left" min-size="50px"><div>id: left</div></resizable-panel>
+        <resizable-panel id="center" min-size="50px"><div>id: center</div></resizable-panel>
+        <resizable-panel id="right" min-size="50px"><div>id: right</div></resizable-panel>
+      </resizable-group>
+
+      <resizable-group id="group-two" autosave="group-two" orientation="vertical" style="min-height: 140px">
+        <resizable-panel id="top" min-size="30px"><div>id: top</div></resizable-panel>
+        <resizable-separator></resizable-separator>
+        <resizable-panel id="bottom" min-size="30px"><div>id: bottom</div></resizable-panel>
+      </resizable-group>
+    </main>
+  </body>
+</html>

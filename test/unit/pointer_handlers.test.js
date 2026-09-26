@@ -65,6 +65,31 @@ describe("pointer handlers", () => {
       dispatch("pointerout", { clientX: 500, clientY: 25, relatedTarget: document.createElement("iframe") })
       expect(getInteractionState().state).toBe("inactive")
     })
+
+    // In a popup the iframe belongs to the popup's window, so it is not an
+    // instance of this window's HTMLIFrameElement.
+    test("moving onto an iframe from another window clears the hover state", () => {
+      init()
+
+      const frame = document.createElement("iframe")
+      document.body.append(frame)
+      const foreignIframe = frame.contentDocument.createElement("iframe")
+      expect(foreignIframe).not.toBeInstanceOf(HTMLIFrameElement)
+
+      dispatch("pointermove", { clientX: 500, clientY: 25, buttons: 0 })
+      expect(getInteractionState().state).toBe("hover")
+
+      dispatch("pointerout", { clientX: 500, clientY: 25, relatedTarget: foreignIframe })
+      expect(getInteractionState().state).toBe("inactive")
+    })
+
+    test("moving onto anything else keeps the hover state", () => {
+      init()
+
+      dispatch("pointermove", { clientX: 500, clientY: 25, buttons: 0 })
+      dispatch("pointerout", { clientX: 500, clientY: 25, relatedTarget: document.createElement("div") })
+      expect(getInteractionState().state).toBe("hover")
+    })
   })
 
   describe("drag", () => {

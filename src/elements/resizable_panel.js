@@ -17,7 +17,7 @@ export default class ResizablePanelElement extends HTMLElement {
   #group = null
 
   connectedCallback() {
-    if (!this.id) this.id = uniqueId("resizable-panel")
+    if (!this.id) this.id = uniqueId("resizable-panel", this.ownerDocument)
     this.setAttribute("data-panel", "")
     this.toggleAttribute("data-disabled", this.disabled)
 

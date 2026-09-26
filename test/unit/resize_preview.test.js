@@ -8,6 +8,16 @@ function previewsIn(root = document) {
   return Array.from(root.querySelectorAll("[data-resize-preview]"))
 }
 
+// The nodes added to or removed from `root` while `callback` runs.
+function childListMutations(root, callback) {
+  const observer = new MutationObserver(() => {})
+  observer.observe(root, { childList: true, subtree: true })
+  callback()
+  const records = observer.takeRecords()
+  observer.disconnect()
+  return records
+}
+
 describe("separator previews", () => {
   afterEach(() => updateInteractionState({ state: "inactive", cursorFlags: 0 }))
 
@@ -190,7 +200,11 @@ describe("separator previews", () => {
     await flush()
     expect(previewsIn(groupElement)).toHaveLength(0)
 
-    updateInteractionState({ ...interaction, cursorFlags: 0 })
+    // From here on nothing this group shows changes, so the DOM must not be
+    // touched at all — the React library asserts no re-render.
+    expect(childListMutations(groupElement, () => {
+      updateInteractionState({ ...interaction, cursorFlags: 0 })
+    })).toEqual([])
     expect(previewsIn(groupElement)).toHaveLength(0)
 
     // Switching modes replaces the registration; stale snapshots must not return.
@@ -201,7 +215,9 @@ describe("separator previews", () => {
     updateInteractionState({ state: "inactive", cursorFlags: 0 })
     expect(previewsIn(groupElement)).toHaveLength(0)
 
-    updateInteractionState({ state: "hover", cursorFlags: 0, hitRegions: [] })
+    expect(childListMutations(groupElement, () => {
+      updateInteractionState({ state: "hover", cursorFlags: 0, hitRegions: [] })
+    })).toEqual([])
     expect(previewsIn(groupElement)).toHaveLength(0)
   })
 

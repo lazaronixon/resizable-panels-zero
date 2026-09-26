@@ -225,6 +225,18 @@ describe("resizable-separator", () => {
       expect(separator.getAttribute("tabindex")).toBe("0")
     })
 
+    test("assigns an id when none is given", async () => {
+      await mount(`
+        <resizable-group>
+          <resizable-panel></resizable-panel>
+          <resizable-separator></resizable-separator>
+          <resizable-panel></resizable-panel>
+        </resizable-group>
+      `)
+
+      expect(document.querySelector("[role=separator]").id).toMatch(/^resizable-separator-\d+$/)
+    })
+
     test("leaves other attributes alone", async () => {
       await mount(`
         <resizable-group>

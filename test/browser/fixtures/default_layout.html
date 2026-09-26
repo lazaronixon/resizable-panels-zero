@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>resizable-panels-zero — default layout</title>
+    <!-- Stands in for the React library's server-components app, where the
+         server reads the saved layout from a cookie and renders it as the
+         group's defaultLayout: here the page arrives with it in the markup. -->
+    <script src="/layout_shift.js"></script>
+    <link rel="stylesheet" href="/pages.css">
+    <script type="module" src="/setup.js"></script>
+  </head>
+  <body>
+    <main>
+      <resizable-group id="group-one" default-layout='{"left":20,"center":30,"right":50}' style="height: 100px">
+        <resizable-panel id="left" min-size="50px"><div>id: left</div></resizable-panel>
+        <resizable-panel id="center" min-size="50px"><div>id: center</div></resizable-panel>
+        <resizable-panel id="right" min-size="50px"><div>id: right</div></resizable-panel>
+      </resizable-group>
+
+      <resizable-group id="group-two" default-layout='{"top":30,"bottom":70}' orientation="vertical" style="min-height: 140px">
+        <resizable-panel id="top" min-size="30px"><div>id: top</div></resizable-panel>
+        <resizable-separator></resizable-separator>
+        <resizable-panel id="bottom" min-size="30px"><div>id: bottom</div></resizable-panel>
+      </resizable-group>
+    </main>
+  </body>
+</html>

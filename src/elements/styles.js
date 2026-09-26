@@ -46,14 +46,15 @@ resizable-separator-overlay[data-separator-overlay-source] { display: none !impo
 
 // The tag goes first in `head` so everything the page loads — the theme
 // included — comes later in the cascade and wins a specificity tie. The few
-// declarations that must hold regardless carry `!important` above.
-export function installStyles(nonce) {
-  if (document.getElementById(STYLE_ELEMENT_ID)) return
+// declarations that must hold regardless carry `!important` above. Each
+// document needs its own copy, since a group can live in an iframe or popup.
+export function installStyles(ownerDocument, nonce) {
+  if (ownerDocument.getElementById(STYLE_ELEMENT_ID)) return
 
-  const element = document.createElement("style")
+  const element = ownerDocument.createElement("style")
   element.id = STYLE_ELEMENT_ID
   if (nonce) element.setAttribute("nonce", nonce)
   element.textContent = RULES
 
-  document.head.prepend(element)
+  ownerDocument.head.prepend(element)
 }
