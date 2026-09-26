@@ -24,8 +24,17 @@ test.describe("resize events", () => {
     // because React applies the new layout a render later; this port applies it
     // straight away, so the panels go directly to their final size. What must
     // hold either way is the final size, and no notification that repeats it.
-    await expect.poll(async () => (await group.panelSize("left")).panelSize).toEqual({ asPercentage: 53, inPixels: 250 })
-    await expect.poll(async () => (await group.panelSize("right")).panelSize).toEqual({ asPercentage: 47, inPixels: 226 })
+    // So each panel reports once more (React: 3 in all), from its first size.
+    await group.expectPanelSize("left", {
+      onResizeCount: 2,
+      panelSize: { asPercentage: 53, inPixels: 250 },
+      prevPanelSize: { asPercentage: 30, inPixels: 293 }
+    })
+    await group.expectPanelSize("right", {
+      onResizeCount: 2,
+      panelSize: { asPercentage: 47, inPixels: 226 },
+      prevPanelSize: { asPercentage: 70, inPixels: 683 }
+    })
     await group.expectNoRepeatedResize("left")
     await group.expectNoRepeatedResize("right")
 
@@ -78,11 +87,24 @@ test.describe("resize events", () => {
 
     await group.expectLayout({ left: 53, right: 47 })
     await group.expectCounts(2)
+    await expect.poll(async () => (await group.panelSize("left")).onResizeCount).toBe(2)
+    await expect.poll(async () => (await group.panelSize("right")).onResizeCount).toBe(2)
 
     await page.setViewportSize({ width: 1000, height: 500 })
 
+    // The layout holds, but the panels grew with the group and hear about it.
     await group.expectLayout({ left: 53, right: 47 })
     await group.expectCounts(2)
+    await group.expectPanelSize("left", {
+      onResizeCount: 3,
+      panelSize: { asPercentage: 53, inPixels: 513 },
+      prevPanelSize: { asPercentage: 53, inPixels: 250 }
+    })
+    await group.expectPanelSize("right", {
+      onResizeCount: 3,
+      panelSize: { asPercentage: 47, inPixels: 463 },
+      prevPanelSize: { asPercentage: 47, inPixels: 226 }
+    })
   })
 
   test("resizing the group leaves preserve-pixel-size panels alone", async ({ group, page }) => {
@@ -104,9 +126,18 @@ test.describe("resize events", () => {
     await group.expectLayout({ left: 62, right: 38 })
     await group.expectCounts(2)
 
-    // See the first test for why there is no intermediate size to expect.
-    await expect.poll(async () => (await group.panelSize("left")).panelSize).toEqual({ asPercentage: 62, inPixels: 293 })
-    await expect.poll(async () => (await group.panelSize("right")).panelSize).toEqual({ asPercentage: 38, inPixels: 183 })
+    // See the first test for why there is no intermediate size to expect. The
+    // left panel keeps its pixels, so only its percentage is news.
+    await group.expectPanelSize("left", {
+      onResizeCount: 2,
+      panelSize: { asPercentage: 62, inPixels: 293 },
+      prevPanelSize: { asPercentage: 30, inPixels: 293 }
+    })
+    await group.expectPanelSize("right", {
+      onResizeCount: 2,
+      panelSize: { asPercentage: 38, inPixels: 183 },
+      prevPanelSize: { asPercentage: 70, inPixels: 683 }
+    })
     await group.expectNoRepeatedResize("left")
     await group.expectNoRepeatedResize("right")
 

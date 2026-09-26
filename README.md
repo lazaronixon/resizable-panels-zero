@@ -339,14 +339,18 @@ npm install
 npm run build            # dist/ — esm, minified, gzip and brotli, plus the CSS
 npm run lint             # eslint, JS and CSS
 npm test                 # vitest, jsdom
-npm run test:browser     # playwright, chromium + firefox + webkit
+npm run test:browser     # playwright, chromium + firefox + webkit + chromium-popup
 npm run playground       # the fixture pages, as a live playground
 ```
 
 Tests come in two layers. **Vitest** (`test/unit/`) covers the layout engine and
-the elements' contract in jsdom, with element geometry mocked. **Playwright**
+the elements' contract in jsdom, with element geometry mocked; a stray
+`console.warn` or `console.error` fails the test. **Playwright**
 (`test/browser/`) drives real browsers for everything that only a browser can
-tell you: dragging, keyboard, cursors, stacking order and real layout.
+tell you: dragging, keyboard, cursors, stacking order and real layout. The
+`chromium-popup` project runs every spec again with the groups in a popup window
+while the library runs in the page that opened it, which catches code that
+reaches for the global `document` or `window` instead of the element's own.
 
 ## Credits
 

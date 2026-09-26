@@ -23,7 +23,9 @@ export default defineConfig({
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
     { name: "firefox", use: { ...devices["Desktop Firefox"] } },
-    { name: "webkit", use: { ...devices["Desktop Safari"] } }
+    { name: "webkit", use: { ...devices["Desktop Safari"] } },
+    // Every spec again, with the groups in a popup window; see test_helper.js.
+    { name: "chromium-popup", use: { ...devices["Desktop Chrome"], usePopupWindow: true } }
   ],
 
   webServer: {

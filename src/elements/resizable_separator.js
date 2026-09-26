@@ -14,7 +14,7 @@ export default class ResizableSeparatorElement extends HTMLElement {
   #isFocused = false
 
   connectedCallback() {
-    if (!this.id) this.id = uniqueId("resizable-separator")
+    if (!this.id) this.id = uniqueId("resizable-separator", this.ownerDocument)
     this.setAttribute("role", "separator")
 
     this.#listeners.listen(this, "focus", () => this.#setFocused(true))

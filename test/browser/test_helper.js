@@ -6,8 +6,31 @@ export const test = base.extend({
   // expected percentages depend on it.
   viewport: { width: 1000, height: 600 },
 
-  group: async ({ page, browserName }, use) => {
-    await use(new GroupHandle(page, browserName))
+  // Set by the popup project: every spec then runs against groups that live in
+  // a popup window while the library runs in the page that opened it, as the
+  // React library's "chromium: popup" project does.
+  usePopupWindow: [ false, { option: true } ],
+
+  page: async ({ page, usePopupWindow }, use) => {
+    if (!usePopupWindow) {
+      await use(page)
+      return
+    }
+
+    await page.goto("/sandbox.html")
+    await page.waitForFunction(() => typeof globalThis.openPopup === "function")
+
+    const [ popup ] = await Promise.all([
+      page.waitForEvent("popup"),
+      page.evaluate(() => globalThis.openPopup())
+    ])
+    await popup.setViewportSize({ width: 1000, height: 600 })
+
+    await use(popup)
+  },
+
+  group: async ({ page, browserName, usePopupWindow }, use) => {
+    await use(new GroupHandle(page, browserName, { popup: usePopupWindow }))
   }
 })
 

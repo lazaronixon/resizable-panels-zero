@@ -143,4 +143,13 @@ describe("uniqueId", () => {
 
     expect(uniqueId("taken")).toBe(`taken-${next + 1}`)
   })
+
+  test("skips ids already in the given document", () => {
+    const ownerDocument = document.implementation.createHTMLDocument()
+    const probe = uniqueId("elsewhere", ownerDocument)
+    const next = Number(probe.split("-")[1]) + 1
+    ownerDocument.body.innerHTML = `<div id="elsewhere-${next}"></div>`
+
+    expect(uniqueId("elsewhere", ownerDocument)).toBe(`elsewhere-${next + 1}`)
+  })
 })

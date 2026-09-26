@@ -4,12 +4,17 @@ import { expect } from "@playwright/test"
 // the events the elements dispatched. Layout numbers are rounded, as the React
 // library's harness prints them.
 export class GroupHandle {
-  constructor(page, browserName) {
+  constructor(page, browserName, { popup = false } = {}) {
     this.page = page
     this.browserName = browserName
+    this.popup = popup
   }
 
+  // A popup is opened blank by the page fixture and has nowhere to navigate
+  // to; each render just replaces its contents.
   async open() {
+    if (this.popup) return
+
     await this.page.goto("/sandbox.html")
     await this.page.waitForFunction(() => typeof globalThis.render === "function")
   }

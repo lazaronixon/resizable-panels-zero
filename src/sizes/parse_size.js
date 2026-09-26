@@ -29,10 +29,12 @@ export function sizeStyleToPixels({ groupSize, panelElement, styleProp }) {
       return size * parseFloat(getComputedStyle(panelElement.ownerDocument.documentElement).fontSize)
     case "em":
       return size * parseFloat(getComputedStyle(panelElement).fontSize)
+    // The panel's own window, which is not this script's when the group lives
+    // in a popup.
     case "vh":
-      return (size / 100) * window.innerHeight
+      return (size / 100) * panelElement.ownerDocument.defaultView.innerHeight
     case "vw":
-      return (size / 100) * window.innerWidth
+      return (size / 100) * panelElement.ownerDocument.defaultView.innerWidth
   }
 }
 

@@ -3,11 +3,11 @@ let idCounter = 0
 // Panels need an id to key the layout by, so one is made up when the markup
 // leaves it out. A made-up id depends on the order elements connect in, so set
 // ids yourself when a saved layout has to survive changes to the page.
-export function uniqueId(prefix) {
+export function uniqueId(prefix, ownerDocument = document) {
   let id
   do {
     id = `${prefix}-${++idCounter}`
-  } while (document.getElementById(id))
+  } while (ownerDocument.getElementById(id))
 
   return id
 }

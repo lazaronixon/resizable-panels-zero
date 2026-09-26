@@ -1,2 +1,2 @@
 import "resizable-panels-zero"
-import "./events_logger.js"
+export { logEvents } from "./events_logger.js"
