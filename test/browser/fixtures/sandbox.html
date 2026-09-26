@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>resizable-panels-zero — sandbox</title>
+    <!-- Sized like the React library's test harness (gap-2, min-h-[250px],
+         min-w-2 separators) so the ported specs expect the same numbers. The
+         theme is left out on purpose: its separator size would move them. -->
+    <style>
+      body { margin: 0; font: 12px/1.2 system-ui, sans-serif; background: #0f172a; color: #e2e8f0; }
+      resizable-group { gap: 8px; min-height: 250px; min-width: 100%; }
+      resizable-panel { background: #1e293b; border-radius: 6px; }
+      resizable-separator { min-width: 8px; min-height: 8px; background: #475569; border-radius: 2px; }
+      resizable-separator[data-separator="hover"] { background: #64748b; }
+      resizable-separator[data-separator="active"] { background: #cbd5e1; }
+      .blocker { position: absolute; top: 0; padding: 8px; background: #dc2626; }
+      .full-screen-dialog { position: fixed; inset: 0; margin: 0; padding: 0; border: 0; width: 100vw; height: 100vh; max-width: none; max-height: none; background: transparent; }
+    </style>
+    <script type="module" src="/sandbox.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

@@ -1,0 +1,105 @@
+/*
+ * resizable-panels-zero — default theme.
+ *
+ * Every value below is a custom property with a fallback, so nothing here has to
+ * be overridden with more specific selectors. Redefine the properties wherever
+ * you like — on `:root`, on a container, or on a single `resizable-group` — and
+ * the separators follow.
+ *
+ * The layout itself does not live here: the script injects the rules that make
+ * the panels resize. This file only decides what the separators look like.
+ */
+
+:root {
+  --resizable-separator-size: 1px;
+  --resizable-separator-color: #e4e4e7;
+  --resizable-separator-color-hover: #a1a1aa;
+  --resizable-separator-color-active: #18181b;
+  --resizable-separator-color-disabled: #f4f4f5;
+
+  --resizable-focus-ring-width: 2px;
+  --resizable-focus-ring-color: rgb(24 24 27 / 0.75);
+
+  --resizable-overlay-size: 2px;
+  --resizable-overlay-color: rgb(24 24 27 / 0.35);
+  --resizable-overlay-color-active: #18181b;
+
+  --resizable-transition-duration: 150ms;
+  --resizable-transition-easing: ease-out;
+}
+
+resizable-separator {
+  position: relative;
+  outline: none;
+  background: var(--resizable-separator-color, #e4e4e7);
+  transition: background-color var(--resizable-transition-duration, 150ms) var(--resizable-transition-easing, ease-out);
+}
+
+resizable-group:not([orientation="vertical"]) > resizable-separator {
+  width: var(--resizable-separator-size, 1px);
+}
+
+resizable-group[orientation="vertical"] > resizable-separator {
+  height: var(--resizable-separator-size, 1px);
+}
+
+resizable-separator[data-separator="hover"] {
+  background: var(--resizable-separator-color-hover, #a1a1aa);
+}
+
+resizable-separator[data-separator="active"] {
+  background: var(--resizable-separator-color-active, #18181b);
+}
+
+resizable-separator[data-separator="disabled"] {
+  background: var(--resizable-separator-color-disabled, #f4f4f5);
+}
+
+/* Clicking a separator focuses it too, so the ring is kept for the keyboard. */
+resizable-separator:focus-visible {
+  background: var(--resizable-separator-color-active, #18181b);
+  box-shadow: 0 0 0 var(--resizable-focus-ring-width, 2px) var(--resizable-focus-ring-color, rgb(24 24 27 / 0.75));
+}
+
+/* The sliding copies shown in separator preview mode. */
+[data-separator-overlay] {
+  background: var(--resizable-overlay-color, rgb(24 24 27 / 0.35));
+}
+
+[data-separator-overlay="active"] {
+  background: var(--resizable-overlay-color-active, #18181b);
+}
+
+resizable-group:not([orientation="vertical"]) > [data-resize-preview] > [data-separator-overlay] {
+  width: var(--resizable-overlay-size, 2px);
+}
+
+resizable-group[orientation="vertical"] > [data-resize-preview] > [data-separator-overlay] {
+  height: var(--resizable-overlay-size, 2px);
+}
+
+/* Before the elements upgrade — and forever, if JavaScript never runs — the
+   panels still sit side by side and share the space evenly. */
+resizable-group:not(:defined) {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+resizable-group[orientation="vertical"]:not(:defined) {
+  flex-direction: column;
+}
+
+resizable-group:not(:defined) > resizable-panel {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  resizable-separator {
+    transition: none;
+  }
+}

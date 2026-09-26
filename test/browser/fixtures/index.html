@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>resizable-panels-zero — playground</title>
+    <link rel="stylesheet" href="/resizable-panels-zero.css">
+    <style>
+      body { margin: 0; padding: 24px; font: 14px/1.4 system-ui, sans-serif; color: #18181b; background: #fafafa; }
+      h1 { font-size: 20px; margin: 0 0 4px; }
+      h2 { font-size: 14px; margin: 32px 0 8px; }
+      p { margin: 0 0 8px; color: #52525b; }
+      .demo { height: 180px; border: 1px solid #e4e4e7; border-radius: 8px; background: #fff; overflow: hidden; }
+      .demo.tall { height: 320px; }
+      resizable-panel > div { padding: 12px; }
+      .muted { color: #71717a; font-size: 12px; }
+      .toolbar { display: flex; gap: 8px; margin-top: 8px; }
+      code { font-size: 12px; }
+      .overlay { background: #2563eb; }
+      .overlay[data-separator-overlay="active"] { background: #1d4ed8; }
+    </style>
+    <script type="module" src="/setup.js"></script>
+  </head>
+  <body>
+    <h1>resizable-panels-zero</h1>
+    <p>Drag the separators, or focus one and use the arrow keys, Home, End, Enter and F6.</p>
+
+    <h2>Horizontal</h2>
+    <div class="demo">
+      <resizable-group id="horizontal">
+        <resizable-panel id="horizontal-left" default-size="30" min-size="10"><div>left</div></resizable-panel>
+        <resizable-separator></resizable-separator>
+        <resizable-panel id="horizontal-center" min-size="10"><div>center</div></resizable-panel>
+        <resizable-separator></resizable-separator>
+        <resizable-panel id="horizontal-right" default-size="25" min-size="10"><div>right</div></resizable-panel>
+      </resizable-group>
+    </div>
+
+    <h2>Vertical</h2>
+    <div class="demo tall">
+      <resizable-group id="vertical" orientation="vertical">
+        <resizable-panel id="vertical-top" min-size="20"><div>top</div></resizable-panel>
+        <resizable-separator></resizable-separator>
+        <resizable-panel id="vertical-bottom" min-size="20"><div>bottom</div></resizable-panel>
+      </resizable-group>
+    </div>
+
+    <h2>Nested</h2>
+    <div class="demo tall">
+      <resizable-group id="nested-outer">
+        <resizable-panel id="nested-left" default-size="30"><div>left</div></resizable-panel>
+        <resizable-separator></resizable-separator>
+        <resizable-panel id="nested-right">
+          <resizable-group id="nested-inner" orientation="vertical">
+            <resizable-panel id="nested-top"><div>top</div></resizable-panel>
+            <resizable-separator></resizable-separator>
+            <resizable-panel id="nested-bottom"><div>bottom</div></resizable-panel>
+          </resizable-group>
+        </resizable-panel>
+      </resizable-group>
+    </div>
+
+    <h2>Collapsible sidebar</h2>
+    <p>The sidebar snaps shut below 150px. Press Enter on the separator to toggle it.</p>
+    <div class="demo">
+      <resizable-group id="collapsible">
+        <resizable-panel id="sidebar" collapsible collapsed-size="48px" min-size="150px" default-size="220px"><div>sidebar</div></resizable-panel>
+        <resizable-separator></resizable-separator>
+        <resizable-panel id="content"><div>content</div></resizable-panel>
+      </resizable-group>
+    </div>
+    <div class="toolbar">
+      <button type="button" onclick="document.getElementById('sidebar').collapse()">collapse()</button>
+      <button type="button" onclick="document.getElementById('sidebar').expand()">expand()</button>
+    </div>
+
+    <h2>Disabled</h2>
+    <div class="demo">
+      <resizable-group id="disabled">
+        <resizable-panel id="disabled-left"><div>left</div></resizable-panel>
+        <resizable-separator disabled></resizable-separator>
+        <resizable-panel id="disabled-center"><div>center</div></resizable-panel>
+        <resizable-separator></resizable-separator>
+        <resizable-panel id="disabled-right" disabled><div>right (disabled)</div></resizable-panel>
+      </resizable-group>
+    </div>
+
+    <h2>Separator preview mode</h2>
+    <p>The panels only resize when the pointer lets go.</p>
+    <div class="demo">
+      <resizable-group id="preview" resize-preview-mode="separator">
+        <resizable-separator-overlay class="overlay"></resizable-separator-overlay>
+        <resizable-panel id="preview-left"><div>left</div></resizable-panel>
+        <resizable-separator></resizable-separator>
+        <resizable-panel id="preview-center"><div>center</div></resizable-panel>
+        <resizable-separator></resizable-separator>
+        <resizable-panel id="preview-right"><div>right</div></resizable-panel>
+      </resizable-group>
+    </div>
+
+    <h2>Autosave</h2>
+    <p>The layout is kept in <code>localStorage</code>; reload the page to see it come back.</p>
+    <div class="demo">
+      <resizable-group id="autosave" autosave="playground">
+        <resizable-panel id="autosave-left"><div>left</div></resizable-panel>
+        <resizable-separator></resizable-separator>
+        <resizable-panel id="autosave-right"><div>right</div></resizable-panel>
+      </resizable-group>
+    </div>
+    <p class="muted" id="autosave-layout"></p>
+
+    <script type="module">
+      const output = document.getElementById("autosave-layout")
+      document.getElementById("autosave").addEventListener("resizable-group:layout-changed", event => {
+        output.textContent = JSON.stringify(event.detail.layout)
+      })
+    </script>
+  </body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>resizable-panels-zero — autosave</title>
+    <!-- Watches for layout shift from the very first paint, which is what a
+         saved layout restored too late would cause. Only Chromium reports it. -->
+    <script>
+      globalThis.layoutShift = 0
+      if (globalThis.PerformanceObserver?.supportedEntryTypes?.includes("layout-shift")) {
+        new PerformanceObserver(list => {
+          for (const entry of list.getEntries()) {
+            if (!entry.hadRecentInput) globalThis.layoutShift += entry.value
+          }
+        }).observe({ type: "layout-shift", buffered: true })
+      }
+    </script>
+    <style>
+      body { margin: 0; font: 12px/1.2 system-ui, sans-serif; }
+      main { display: flex; flex-direction: column; gap: 8px; padding: 8px; }
+      resizable-group { gap: 8px; }
+      resizable-panel { background: #e2e8f0; border-radius: 6px; }
+      resizable-panel > div { padding: 8px; }
+      resizable-separator { min-height: 8px; background: #94a3b8; border-radius: 6px; }
+    </style>
+    <script type="module" src="/setup.js"></script>
+  </head>
+  <body>
+    <main>
+      <resizable-group id="group-one" autosave="group-one" style="height: 100px">
+        <resizable-panel id="left" min-size="50px"><div>id: left</div></resizable-panel>
+        <resizable-panel id="center" min-size="50px"><div>id: center</div></resizable-panel>
+        <resizable-panel id="right" min-size="50px"><div>id: right</div></resizable-panel>
+      </resizable-group>
+
+      <resizable-group id="group-two" autosave="group-two" orientation="vertical" style="min-height: 140px">
+        <resizable-panel id="top" min-size="30px"><div>id: top</div></resizable-panel>
+        <resizable-separator></resizable-separator>
+        <resizable-panel id="bottom" min-size="30px"><div>id: bottom</div></resizable-panel>
+      </resizable-group>
+    </main>
+  </body>
+</html>
